@@ -27,12 +27,12 @@ You can test the endpoints using either:
 
 1. Clone the repository
 ```bash
-  git clone [your-repository-url]
+  git clone https://github.com/dgineblasco/booking-api.git
 ```
 
 2. Build and start Docker containers
 ```bash
-  docker-compose up -d
+  docker compose up -d
 ```
 3. Install dependencies
 ```bash
@@ -59,8 +59,8 @@ You can test the endpoints using either:
 ### Calculate Booking Statistics
 ```bash
   curl -X POST http://localhost:8089/stats \
--H "Content-Type: application/json" \
--d '[
+  -H "Content-Type: application/json" \
+  -d '[
    {
        "request_id": "1",
        "check_in": "2024-01-01",
@@ -68,7 +68,7 @@ You can test the endpoints using either:
        "selling_rate": 100,
        "margin": 10.5
    }
-]'
+  ]'
 ```
 
 Response:
@@ -84,8 +84,8 @@ Response:
 ### Maximize Bookings
 ```bash
   curl -X POST http://localhost:8089/maximize \
--H "Content-Type: application/json" \
--d '[
+ -H "Content-Type: application/json" \
+  -d '[
     {
         "request_id": "A",
         "check_in": "2024-01-01",
@@ -107,7 +107,7 @@ Response:
         "selling_rate": 400,
         "margin": 10
     }
-]'
+  ]'
 ```
 
 Response:
