@@ -1,0 +1,12 @@
+services:
+  app:
+    container_name: booking-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=dev
