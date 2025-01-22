@@ -2,6 +2,11 @@
 namespace Tests\Unit\Booking\Domain;
 
 use App\Booking\Domain\BookingRequest;
+use App\Booking\Domain\ValueObject\CheckInDate;
+use App\Booking\Domain\ValueObject\Margin;
+use App\Booking\Domain\ValueObject\Nights;
+use App\Booking\Domain\ValueObject\RequestId;
+use App\Booking\Domain\ValueObject\SellingRate;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -9,14 +14,14 @@ class BookingRequestTest extends TestCase
 {
     public function test_create_valid_booking_request(): void
     {
-        $checkIn = new DateTimeImmutable('2024-01-01');
+        $checkIn = new DateTimeImmutable('2026-01-01');
 
         $booking = new BookingRequest(
-            'request-1',
-            new DateTimeImmutable('2024-01-01'),
-            2,
-            100.0,
-            10.0
+            new RequestId('request-1'),
+            new CheckInDate('2026-01-01'),
+            new Nights(2),
+            new SellingRate(100.0),
+            new Margin(10.0)
         );
 
         $expectedCheckOut = $checkIn->modify('+2 days');
@@ -35,11 +40,11 @@ class BookingRequestTest extends TestCase
         $this->expectExceptionMessage('Selling rate must be positive');
 
         new BookingRequest(
-            'request-1',
-            new DateTimeImmutable('2024-01-01'),
-            1,
-            -100,
-            10
+            new RequestId('request-1'),
+            new CheckInDate('2026-01-01'),
+            new Nights(2),
+            new SellingRate(-100.0),
+            new Margin(10.0)
         );
     }
 
@@ -48,11 +53,11 @@ class BookingRequestTest extends TestCase
         $this->expectExceptionMessage('Margin must be between 0 and 100');
 
         new BookingRequest(
-            'request-1',
-            new DateTimeImmutable('2024-01-01'),
-            3,
-            100,
-            -10
+            new RequestId('request-1'),
+            new CheckInDate('2026-01-01'),
+            new Nights(2),
+            new SellingRate(100.0),
+            new Margin(-10.0)
         );
     }
 
@@ -61,11 +66,11 @@ class BookingRequestTest extends TestCase
         $this->expectExceptionMessage('Nights must be positive');
 
         new BookingRequest(
-            'request-1',
-            new DateTimeImmutable('2024-01-01'),
-            0,
-            50,
-            10
+            new RequestId('request-1'),
+            new CheckInDate('2026-01-01'),
+            new Nights(0),
+            new SellingRate(100.0),
+            new Margin(10.0)
         );
     }
 }

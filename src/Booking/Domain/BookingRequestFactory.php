@@ -2,26 +2,38 @@
 
 namespace App\Booking\Domain;
 
-use DateTimeImmutable;
+use App\Booking\Domain\ValueObject\CheckInDate;
+use App\Booking\Domain\ValueObject\Margin;
+use App\Booking\Domain\ValueObject\Nights;
+use App\Booking\Domain\ValueObject\RequestId;
+use App\Booking\Domain\ValueObject\SellingRate;
 
 class BookingRequestFactory
 {
+    private const array REQUIRED_FIELDS = [
+        'request_id',
+        'check_in',
+        'nights',
+        'selling_rate',
+        'margin'
+    ];
+
     public function createFromArray(array $data): BookingRequest
     {
         $this->validateArrayStructure($data);
 
         return new BookingRequest(
-            $data['request_id'],
-            new DateTimeImmutable($data['check_in']),
-            intval($data['nights']),
-            floatval($data['selling_rate']),
-            floatval($data['margin']),
+            new RequestId($data['request_id']),
+            new CheckInDate($data['check_in']),
+            new Nights($data['nights']),
+            new SellingRate($data['selling_rate']),
+            new Margin($data['margin'])
         );
     }
 
     private function validateArrayStructure(array $data): void
     {
-        $requiredFields = ['request_id', 'check_in', 'nights', 'selling_rate', 'margin'];
+        $requiredFields = self::REQUIRED_FIELDS;
         $missingFields = array_diff($requiredFields, array_keys($data));
 
         if (!empty($missingFields)) {

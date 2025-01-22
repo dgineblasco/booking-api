@@ -42,18 +42,6 @@ You can test the endpoints using either:
 ```bash
   docker exec -it booking-api vendor/bin/phpunit
 ```
-## TODO
-
-+ Implement Value Objects for BookingRequest validation
-+ Create domain-specific exceptions
-+ Add Query Bus for CQRS pattern
-+ Create BookingRequests Collection for type safety and encapsulation
-+ Install Symfony YAML component for config
-+ Set up Xdebug for debugging
-+ Add OpenAPI/Swagger documentation
-+ Configure custom domain for local environment
-+ Add PHP-CS-Fixer for code style and PHPStan for checking errors
-
 
 ## API Endpoints
 ### Calculate Booking Statistics
@@ -63,7 +51,7 @@ You can test the endpoints using either:
 -d '[
    {
        "request_id": "1",
-       "check_in": "2024-01-01",
+       "check_in": "2026-01-01",
        "nights": 2,
        "selling_rate": 100,
        "margin": 10.5
@@ -88,21 +76,21 @@ Response:
 -d '[
     {
         "request_id": "A",
-        "check_in": "2024-01-01",
+        "check_in": "2026-01-01",
         "nights": 5,
         "selling_rate": 1000,
         "margin": 10
     },
     {
         "request_id": "B",
-        "check_in": "2024-01-03",
+        "check_in": "2026-01-03",
         "nights": 5,
         "selling_rate": 700,
         "margin": 10
     },
     {
         "request_id": "C",
-        "check_in": "2024-01-07",
+        "check_in": "2026-01-07",
         "nights": 5,
         "selling_rate": 400,
         "margin": 10

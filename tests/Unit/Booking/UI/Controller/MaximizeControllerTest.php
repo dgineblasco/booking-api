@@ -25,7 +25,7 @@ class MaximizeControllerTest extends TestCase
         $bookings = [
             [
                 'request_id' => '1',
-                'check_in' => '2024-01-01',
+                'check_in' => '2026-01-01',
                 'nights' => 2,
                 'selling_rate' => 100.0,
                 'margin' => 10.0

@@ -11,7 +11,7 @@ class MaximizeBookingQueryMother
         return new MaximizeBookingQuery($bookings ?? [
             [
                 'request_id' => 'default-id',
-                'check_in' => '2024-01-01',
+                'check_in' => '2026-01-01',
                 'nights' => 2,
                 'selling_rate' => 100.0,
                 'margin' => 10.0
@@ -24,14 +24,14 @@ class MaximizeBookingQueryMother
         return self::create([
             [
                 'request_id' => '1',
-                'check_in' => '2024-01-01',
+                'check_in' => '2026-01-01',
                 'nights' => 2,
                 'selling_rate' => 100.0,
                 'margin' => 10.0
             ],
             [
                 'request_id' => '2',
-                'check_in' => '2024-01-03',
+                'check_in' => '2026-01-03',
                 'nights' => 3,
                 'selling_rate' => 150.0,
                 'margin' => 15.0

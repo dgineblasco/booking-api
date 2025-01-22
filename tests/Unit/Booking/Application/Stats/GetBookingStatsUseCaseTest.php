@@ -2,35 +2,70 @@
 
 namespace Tests\Unit\Booking\Application\Stats;
 
+use App\Booking\Application\Creator\BookingRequestCreator;
 use App\Booking\Application\Stats\GetBookingStatsResponse;
 use App\Booking\Application\Stats\GetBookingStatsUseCase;
 use App\Booking\Domain\BookingRequest;
-use App\Booking\Domain\BookingRequestFactory;
+use App\Booking\Domain\BookingRequestCollection;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GetBookingStatsUseCaseTest extends TestCase
 {
-    private BookingRequestFactory  $factory;
+    private BookingRequestCreator&MockObject $creator;
     private GetBookingStatsUseCase $useCase;
 
     protected function setUp(): void
     {
-        $this->factory = $this->createMock(BookingRequestFactory::class);
-        $this->useCase = new GetBookingStatsUseCase($this->factory);
+        $this->creator = $this->createMock(BookingRequestCreator::class);
+        $this->useCase = new GetBookingStatsUseCase($this->creator);
     }
 
-    public function test_execute_calculate_stats(): void
+    public function test_calculate_stats_for_bookings(): void
     {
-        $bookingData = [
+        $rawBookings = [
             [
-                'request_id' => 'request_test_1',
+                'request_id' => '1',
+                'check_in' => '2024-01-01',
+                'nights' => 2,
+                'selling_rate' => 100.0,
+                'margin' => 10.0
+            ]
+        ];
+
+        $booking = $this->createMock(BookingRequest::class);
+        $booking->method('getProfitPerNight')->willReturn(5.0);
+
+        $collection = $this->createMock(BookingRequestCollection::class);
+        $collection->method('map')->willReturn([5.0]);
+
+        $this->creator
+            ->expects($this->once())
+            ->method('createCollection')
+            ->with($rawBookings)
+            ->willReturn($collection);
+
+        $response = $this->useCase->execute($rawBookings);
+
+        $this->assertInstanceOf(GetBookingStatsResponse::class, $response);
+        $responseData = $response->toArray();
+        $this->assertEquals(5.0, $responseData['average']);
+        $this->assertEquals(5.0, $responseData['minimum']);
+        $this->assertEquals(5.0, $responseData['maximum']);
+    }
+
+    public function test_calculate_stats_for_multiple_bookings(): void
+    {
+        $rawBookings = [
+            [
+                'request_id' => '1',
                 'check_in' => '2024-01-01',
                 'nights' => 2,
                 'selling_rate' => 100.0,
                 'margin' => 10.0
             ],
             [
-                'request_id' => 'request_test_2',
+                'request_id' => '2',
                 'check_in' => '2024-01-03',
                 'nights' => 3,
                 'selling_rate' => 150.0,
@@ -38,23 +73,39 @@ class GetBookingStatsUseCaseTest extends TestCase
             ]
         ];
 
-        $booking1 = $this->createMock(BookingRequest::class);
-        $booking1->method('getProfitPerNight')->willReturn(5.0);
+        $collection = $this->createMock(BookingRequestCollection::class);
+        $collection->method('map')->willReturn([5.0, 7.5]);
 
-        $booking2 = $this->createMock(BookingRequest::class);
-        $booking2->method('getProfitPerNight')->willReturn(7.5);
+        $this->creator
+            ->expects($this->once())
+            ->method('createCollection')
+            ->with($rawBookings)
+            ->willReturn($collection);
 
-        $this->factory->expects($this->exactly(2))
-            ->method('createFromArray')
-            ->willReturnOnConsecutiveCalls($booking1, $booking2);
+        $response = $this->useCase->execute($rawBookings);
 
-        $response = $this->useCase->execute($bookingData);
+        $responseData = $response->toArray();
+        $this->assertEquals(6.25, $responseData['average']);  // (5.0 + 7.5) / 2
+        $this->assertEquals(5.0, $responseData['minimum']);
+        $this->assertEquals(7.5, $responseData['maximum']);
+    }
 
-        $this->assertInstanceOf(GetBookingStatsResponse::class, $response);
-        $responseArray = $response->toArray();
-        $this->assertEquals(6.25, $responseArray['average']);
-        $this->assertEquals(5.0, $responseArray['minimum']);
-        $this->assertEquals(7.5, $responseArray['maximum']);
+    public function test_calculate_stats_for_empty_bookings(): void
+    {
+        $collection = $this->createMock(BookingRequestCollection::class);
+        $collection->method('map')->willReturn([]);
+
+        $this->creator
+            ->expects($this->once())
+            ->method('createCollection')
+            ->with([])
+            ->willReturn($collection);
+
+        $response = $this->useCase->execute([]);
+
+        $responseData = $response->toArray();
+        $this->assertEquals(0, $responseData['average']);
+        $this->assertEquals(0, $responseData['minimum']);
+        $this->assertEquals(0, $responseData['maximum']);
     }
 }
-

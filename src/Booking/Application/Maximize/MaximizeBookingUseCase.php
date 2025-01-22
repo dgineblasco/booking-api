@@ -2,51 +2,42 @@
 
 namespace App\Booking\Application\Maximize;
 
+use App\Booking\Application\Creator\BookingRequestCreator;
 use App\Booking\Domain\BookingRequest;
-use App\Booking\Domain\BookingRequestFactory;
+use App\Booking\Domain\BookingRequestCollection;
 
 class MaximizeBookingUseCase
 {
     public function __construct(
-        private readonly BookingRequestFactory $factory
+        private readonly BookingRequestCreator $bookingRequestCreator
     ) {}
 
     public function execute(array $rawBookings): MaximizeBookingResponse
     {
-        $bookings = $this->createBookingRequests($rawBookings);
+        $bookings = $this->bookingRequestCreator->createCollection($rawBookings);
 
-        usort($bookings, fn(BookingRequest $a, BookingRequest $b) => $a->getCheckIn() <=> $b->getCheckIn());
-
-        $bestCombination = $this->findBestBookingCombination($bookings);
+        $bestCombination = $this->findBestBookingCombination($bookings->sortedByCheckIn());
 
         return $this->buildResponse($bestCombination);
     }
 
-    private function createBookingRequests(array $rawBookings): array
+    private function findBestBookingCombination(BookingRequestCollection $bookings): BookingRequestCollection
     {
-        return array_map(
-            fn(array $booking) => $this->factory->createFromArray($booking),
-            $rawBookings
-        );
-    }
-
-    /** @param BookingRequest[] $bookings */
-    private function findBestBookingCombination(array $bookings): array
-    {
-        $bestCombination = [];
+        $bestCombination = BookingRequestCollection::create();
         $maxProfit = 0;
-        $totalBookings = count($bookings);
+        $bookingsArray = $bookings->toArray();
+        $totalBookings = $bookings->count();
 
-        foreach ($bookings as $startIndex => $firstBooking) {
-            $currentCombination = [$firstBooking];
+        foreach ($bookingsArray as $startIndex => $firstBooking) {
+            $currentCombination = BookingRequestCollection::create($firstBooking);
             $currentProfit = $firstBooking->getTotalProfit();
             $lastBooking = $firstBooking;
 
             for ($nextIndex = $startIndex + 1; $nextIndex < $totalBookings; $nextIndex++) {
-                $nextBooking = $bookings[$nextIndex];
+                $nextBooking = $bookingsArray[$nextIndex];
 
                 if ($this->isBookingCompatible($lastBooking, $nextBooking)) {
-                    $currentCombination[] = $nextBooking;
+                    $currentCombination = $currentCombination->add($nextBooking);
                     $currentProfit += $nextBooking->getTotalProfit();
                     $lastBooking = $nextBooking;
                 }
@@ -66,40 +57,24 @@ class MaximizeBookingUseCase
         return $nextBooking->getCheckIn() >= $lastBooking->getCheckOut();
     }
 
-    private function buildResponse(array $bestCombination): MaximizeBookingResponse
+    /*TODO: Only one foreach on the Collection and return all the data needed in the response*/
+    private function buildResponse(BookingRequestCollection $bestCombination): MaximizeBookingResponse
     {
-        $profitsPerNight = array_map(
-            fn(BookingRequest $booking) => $booking->getProfitPerNight(),
-            $bestCombination
+        $profitsPerNight = $bestCombination->map(
+            fn(BookingRequest $booking) => $booking->getProfitPerNight()
         );
 
         return new MaximizeBookingResponse(
-            $this->extractBookingIds($bestCombination),
-            $this->calculateTotalProfit($bestCombination),
+            $bestCombination->map(fn(BookingRequest $booking) => $booking->getId()),
+            $bestCombination->getTotalProfit(),
             $this->calculateAverageProfit($profitsPerNight),
-            min($profitsPerNight),
-            max($profitsPerNight)
+            empty($profitsPerNight) ? 0 : min($profitsPerNight),
+            empty($profitsPerNight) ? 0 : max($profitsPerNight)
         );
     }
 
-    private function extractBookingIds(array $bookings): array
+    private function calculateAverageProfit(array $profitsPerNight): float
     {
-        return array_map(
-            fn(BookingRequest $booking) => $booking->getId(),
-            $bookings
-        );
-    }
-
-    private function calculateTotalProfit(array $bookings): float
-    {
-        return array_sum(array_map(
-            fn(BookingRequest $booking) => $booking->getTotalProfit(),
-            $bookings
-        ));
-    }
-
-    private function calculateAverageProfit(array $profits): float
-    {
-        return empty($profits) ? 0 : array_sum($profits) / count($profits);
+        return empty($profitsPerNight) ? 0 : array_sum($profitsPerNight) / count($profitsPerNight);
     }
 }

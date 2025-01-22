@@ -2,72 +2,62 @@
 
 namespace App\Booking\Domain;
 
+use App\Booking\Domain\ValueObject\CheckInDate;
+use App\Booking\Domain\ValueObject\Margin;
+use App\Booking\Domain\ValueObject\Nights;
+use App\Booking\Domain\ValueObject\RequestId;
+use App\Booking\Domain\ValueObject\SellingRate;
 use DateTimeImmutable;
 
 class BookingRequest
 {
     public function __construct(
-        private readonly string            $id,
-        private readonly DateTimeImmutable $checkIn,
-        private readonly int               $nights,
-        private readonly float             $sellingRate,
-        private readonly float             $margin,
-
+        private readonly RequestId   $id,
+        private readonly CheckInDate $checkIn,
+        private readonly Nights      $nights,
+        private readonly SellingRate $sellingRate,
+        private readonly Margin      $margin,
     ) {
-        $this->validate();
-    }
-
-    private function validate(): void
-    {
-        if ($this->nights <= 0) {
-            throw new \InvalidArgumentException('Nights must be positive');
-        }
-        if ($this->sellingRate <= 0) {
-            throw new \InvalidArgumentException('Selling rate must be positive');
-        }
-        if ($this->margin <= 0 || $this->margin > 100) {
-            throw new \InvalidArgumentException('Margin must be between 0 and 100');
-        }
     }
 
     public function getId(): string
     {
-        return $this->id;
+        return $this->id->value();
     }
 
     public function getCheckIn(): DateTimeImmutable
     {
-        return $this->checkIn;
+        return $this->checkIn->value();
     }
 
     public function getCheckOut(): DateTimeImmutable
     {
-        return $this->checkIn->modify("+{$this->nights} days");
+        return $this->getCheckIn()->modify("+{$this->getNights()} days");
     }
 
     public function getProfitPerNight(): float
     {
-        return ($this->sellingRate * ($this->margin / 100)) / $this->nights;
+        return ($this->getSellingRate() * ($this->getMargin() / 100)) / $this->getNights();
     }
 
     public function getTotalProfit(): float
     {
-        return $this->sellingRate * ($this->margin / 100);
+        return $this->getSellingRate() * ($this->getMargin() / 100);
     }
 
     public function getNights(): int
     {
-        return $this->nights;
+        return $this->nights->value();
     }
 
     public function getSellingRate(): float
     {
-        return $this->sellingRate;
+        return $this->sellingRate->value();
     }
 
     public function getMargin(): float
     {
-        return $this->margin;
+        return $this->margin->value();
     }
 
 }
