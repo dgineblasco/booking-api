@@ -14,7 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class GetBookingStatsUseCaseTest extends TestCase
 {
-    private BookingRequestCreator&MockObject $creator;
+    private BookingRequestCreator|MockObject $creator;
+
     private GetBookingStatsUseCase $useCase;
 
     protected function setUp(): void

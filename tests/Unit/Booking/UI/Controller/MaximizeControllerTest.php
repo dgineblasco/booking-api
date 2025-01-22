@@ -15,7 +15,7 @@ use Tests\Unit\Booking\Application\Maximize\MaximizeBookingResponseMother;
 class MaximizeControllerTest extends TestCase
 {
     private MaximizeBookingQueryHandler|MockObject $queryHandler;
-    private MaximizeController $controller;
+    private MaximizeController                     $controller;
 
     protected function setUp(): void
     {

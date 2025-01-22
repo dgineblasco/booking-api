@@ -15,7 +15,7 @@ use Tests\Unit\Booking\Application\Stats\GetBookingStatsResponseMother;
 class StatsControllerTest extends TestCase
 {
     private GetBookingStatsQueryHandler|MockObject $queryHandler;
-    private StatsController $controller;
+    private StatsController                        $controller;
 
     protected function setUp(): void
     {

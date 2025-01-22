@@ -14,7 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class BookingRequestCreatorTest extends TestCase
 {
-    private BookingRequestFactory&MockObject $factory;
+    private BookingRequestFactory|MockObject $factory;
+
     private BookingRequestCreator $creator;
 
     protected function setUp(): void

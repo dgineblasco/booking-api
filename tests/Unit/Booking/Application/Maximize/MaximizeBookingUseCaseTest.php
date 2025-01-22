@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class MaximizeBookingUseCaseTest extends TestCase
 {
-    private BookingRequestCreator&MockObject $creator;
-    private MaximizeBookingUseCase $useCase;
+    private BookingRequestCreator|MockObject $creator;
+    private MaximizeBookingUseCase           $useCase;
 
     protected function setUp(): void
     {
@@ -108,7 +108,7 @@ class MaximizeBookingUseCaseTest extends TestCase
         string $checkOut,
         float $totalProfit,
         float $profitPerNight
-    ): BookingRequest&MockObject {
+    ): BookingRequest|MockObject {
         $booking = $this->createMock(BookingRequest::class);
 
         $booking->method('getId')->willReturn($id);
@@ -270,7 +270,7 @@ class MaximizeBookingUseCaseTest extends TestCase
         $this->assertEquals(['A'], $responseData['request_ids']);
     }
 
-    private function createCollectionMock(array $bookings): BookingRequestCollection&MockObject
+    private function createCollectionMock(array $bookings): BookingRequestCollection|MockObject
     {
         $collection = $this->createMock(BookingRequestCollection::class);
         $collection->method('sortedByCheckIn')->willReturn($collection);
