@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Tests\Unit\Booking\Domain;
 
 use App\Booking\Domain\BookingRequest;
@@ -35,7 +38,8 @@ class BookingRequestTest extends TestCase
         $this->assertEquals($expectedCheckOut, $booking->getCheckOut());
     }
 
-    public function test_throw_exception_for_invalid_selling_rate(): void {
+    public function test_throw_exception_for_invalid_selling_rate(): void
+    {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Selling rate must be positive');
 
@@ -48,7 +52,8 @@ class BookingRequestTest extends TestCase
         );
     }
 
-    public function test_throw_exception_for_invalid_selling_margin(): void {
+    public function test_throw_exception_for_invalid_selling_margin(): void
+    {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Margin must be between 0 and 100');
 
@@ -61,7 +66,8 @@ class BookingRequestTest extends TestCase
         );
     }
 
-    public function test_throw_exception_for_invalid_selling_night(): void {
+    public function test_throw_exception_for_invalid_selling_night(): void
+    {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Nights must be positive');
 

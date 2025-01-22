@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Booking\Application\Creator;
 
 use App\Booking\Domain\BookingRequestCollection;
@@ -11,7 +13,8 @@ class BookingRequestCreator
 {
     public function __construct(
         private readonly BookingRequestFactory $factory
-    ) {}
+    ) {
+    }
 
     public function createCollection(array $rawBookings): BookingRequestCollection
     {

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Booking\Application\Maximize;
 
 use App\Booking\Application\Creator\BookingRequestCreator;
-use App\Booking\Application\Maximize\MaximizeBookingResponse;
 use App\Booking\Application\Maximize\MaximizeBookingUseCase;
 use App\Booking\Domain\BookingRequest;
 use App\Booking\Domain\BookingRequestCollection;
@@ -56,7 +57,7 @@ class MaximizeBookingUseCaseTest extends TestCase
         $collection->method('sortedByCheckIn')->willReturn($collection);
         $collection->method('toArray')->willReturn([$bookingA, $bookingB, $bookingC]);
         $collection->method('count')->willReturn(3);
-        $collection->method('map')->willReturnCallback(function($callback) use ($bookingA, $bookingC) {
+        $collection->method('map')->willReturnCallback(function ($callback) use ($bookingA, $bookingC) {
             return array_map($callback, [$bookingA, $bookingC]);
         });
         $collection->method('getTotalProfit')->willReturn(140.0);
@@ -275,11 +276,11 @@ class MaximizeBookingUseCaseTest extends TestCase
         $collection->method('sortedByCheckIn')->willReturn($collection);
         $collection->method('toArray')->willReturn($bookings);
         $collection->method('count')->willReturn(count($bookings));
-        $collection->method('map')->willReturnCallback(function($callback) use ($bookings) {
+        $collection->method('map')->willReturnCallback(function ($callback) use ($bookings) {
             return array_map($callback, $bookings);
         });
         $collection->method('getTotalProfit')->willReturn(
-            array_sum(array_map(fn($b) => $b->getTotalProfit(), $bookings))
+            array_sum(array_map(fn ($b) => $b->getTotalProfit(), $bookings))
         );
 
         return $collection;

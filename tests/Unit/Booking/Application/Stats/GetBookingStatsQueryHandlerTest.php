@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Booking\Application\Stats;
 
 use App\Booking\Application\Stats\GetBookingStatsQueryHandler;

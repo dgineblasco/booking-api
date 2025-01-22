@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Booking\Application\Maximize;
 
 use App\Booking\Application\Creator\BookingRequestCreator;
@@ -10,7 +12,8 @@ class MaximizeBookingUseCase
 {
     public function __construct(
         private readonly BookingRequestCreator $bookingRequestCreator
-    ) {}
+    ) {
+    }
 
     public function execute(array $rawBookings): MaximizeBookingResponse
     {
@@ -61,11 +64,11 @@ class MaximizeBookingUseCase
     private function buildResponse(BookingRequestCollection $bestCombination): MaximizeBookingResponse
     {
         $profitsPerNight = $bestCombination->map(
-            fn(BookingRequest $booking) => $booking->getProfitPerNight()
+            fn (BookingRequest $booking) => $booking->getProfitPerNight()
         );
 
         return new MaximizeBookingResponse(
-            $bestCombination->map(fn(BookingRequest $booking) => $booking->getId()),
+            $bestCombination->map(fn (BookingRequest $booking) => $booking->getId()),
             $bestCombination->getTotalProfit(),
             $this->calculateAverageProfit($profitsPerNight),
             empty($profitsPerNight) ? 0 : min($profitsPerNight),

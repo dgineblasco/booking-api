@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Booking\Application\Creator;
 
 use App\Booking\Application\Creator\BookingRequestCreator;

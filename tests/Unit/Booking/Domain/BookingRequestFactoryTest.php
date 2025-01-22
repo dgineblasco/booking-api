@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Tests\Unit\Booking\Domain;
 
 use App\Booking\Domain\BookingRequest;

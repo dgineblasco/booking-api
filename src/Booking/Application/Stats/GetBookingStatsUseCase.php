@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Booking\Application\Stats;
 
 use App\Booking\Application\Creator\BookingRequestCreator;
@@ -9,14 +11,15 @@ class GetBookingStatsUseCase
 {
     public function __construct(
         private readonly BookingRequestCreator $bookingRequestCreator
-    ) {}
+    ) {
+    }
 
     public function execute(array $rawBookings): GetBookingStatsResponse
     {
         $bookings = $this->bookingRequestCreator->createCollection($rawBookings);
 
         $profitsPerNight = $bookings->map(
-            fn(BookingRequest $booking) => $booking->getProfitPerNight()
+            fn (BookingRequest $booking) => $booking->getProfitPerNight()
         );
 
         return new GetBookingStatsResponse(

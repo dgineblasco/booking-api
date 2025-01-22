@@ -23,5 +23,9 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "fix": "php-cs-fixer fix --allow-risky=yes",
+        "fix:dry": "php-cs-fixer fix --dry-run --diff --allow-risky=yes"
     }
 }

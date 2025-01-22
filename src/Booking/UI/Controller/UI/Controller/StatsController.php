@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Booking\UI\Controller\UI\Controller;
 
 use App\Booking\Application\Stats\GetBookingStatsQuery;
@@ -10,7 +13,8 @@ final readonly class StatsController
 {
     public function __construct(
         private GetBookingStatsQueryHandler $queryHandler
-    ) {}
+    ) {
+    }
 
     public function __invoke(Request $request): JsonResponse
     {

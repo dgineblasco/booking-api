@@ -1,10 +1,11 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Tests\Unit\Booking\Domain\ValueObject;
 
-use App\Booking\Domain\BookingRequest;
 use App\Booking\Domain\Exception\InvalidSellingRateException;
 use App\Booking\Domain\ValueObject\SellingRate;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 class SellingRateTest extends TestCase

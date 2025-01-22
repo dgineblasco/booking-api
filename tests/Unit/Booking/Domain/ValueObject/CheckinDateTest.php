@@ -1,12 +1,11 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Tests\Unit\Booking\Domain\ValueObject;
 
-use App\Booking\Domain\BookingRequest;
 use App\Booking\Domain\Exception\InvalidCheckInDateException;
-use App\Booking\Domain\Exception\InvalidNightsException;
 use App\Booking\Domain\ValueObject\CheckInDate;
-use App\Booking\Domain\ValueObject\Nights;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 class CheckinDateTest extends TestCase

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Booking\Domain;
 
 use App\Shared\Domain\Collection\Collection;
@@ -14,7 +16,7 @@ class BookingRequestCollection extends Collection
     public static function fromArray(array $bookingRequests): self
     {
         return new self(array_map(
-            static fn(BookingRequest $request): BookingRequest => $request,
+            static fn (BookingRequest $request): BookingRequest => $request,
             $bookingRequests
         ));
     }
@@ -28,7 +30,7 @@ class BookingRequestCollection extends Collection
     {
         return new self(array_filter(
             $this->items,
-            static fn(BookingRequest $request): bool => $request->getId() !== $bookingRequestId
+            static fn (BookingRequest $request): bool => $request->getId() !== $bookingRequestId
         ));
     }
 
@@ -36,7 +38,7 @@ class BookingRequestCollection extends Collection
     {
         return array_reduce(
             $this->items,
-            static fn(float $carry, BookingRequest $item): float => $carry + $item->getTotalProfit(),
+            static fn (float $carry, BookingRequest $item): float => $carry + $item->getTotalProfit(),
             0.0
         );
     }
@@ -44,7 +46,8 @@ class BookingRequestCollection extends Collection
     public function sortedByCheckIn(): self
     {
         $items = $this->items;
-        usort($items, static fn(BookingRequest $a, BookingRequest $b) => $a->getCheckIn() <=> $b->getCheckIn());
+        usort($items, static fn (BookingRequest $a, BookingRequest $b) => $a->getCheckIn() <=> $b->getCheckIn());
+
         return new self($items);
     }
 }
