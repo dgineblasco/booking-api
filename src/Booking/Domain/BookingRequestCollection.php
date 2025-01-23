@@ -8,6 +8,12 @@ use App\Shared\Domain\Collection\Collection;
 
 class BookingRequestCollection extends Collection
 {
+    private array $requestIds = [];
+    private float $totalProfit = 0.0;
+    private float $averageNight = 0.0;
+    private float $minNight = 0.0;
+    private float $maxNight = 0.0;
+
     public static function create(BookingRequest ...$bookingRequests): self
     {
         return new self($bookingRequests);
@@ -26,28 +32,50 @@ class BookingRequestCollection extends Collection
         return BookingRequest::class;
     }
 
-    public function remove(string $bookingRequestId): self
-    {
-        return new self(array_filter(
-            $this->items,
-            static fn (BookingRequest $request): bool => $request->getId() !== $bookingRequestId
-        ));
-    }
-
-    public function getTotalProfit(): float
-    {
-        return array_reduce(
-            $this->items,
-            static fn (float $carry, BookingRequest $item): float => $carry + $item->getTotalProfit(),
-            0.0
-        );
-    }
-
     public function sortedByCheckIn(): self
     {
         $items = $this->items;
         usort($items, static fn (BookingRequest $a, BookingRequest $b) => $a->getCheckIn() <=> $b->getCheckIn());
-
         return new self($items);
+    }
+
+    public function calculateMetrics(): void
+    {
+        $this->requestIds = [];
+        $this->totalProfit = 0.0;
+        $profitsPerNight = [];
+
+        foreach ($this->items as $booking) {
+            $this->requestIds[] = $booking->getId();
+            $this->totalProfit += $booking->getTotalProfit();
+            $profitsPerNight[] = $booking->getProfitPerNight();
+        }
+
+        if (!empty($profitsPerNight)) {
+            $this->averageNight = array_sum($profitsPerNight) / count($profitsPerNight);
+            $this->minNight = min($profitsPerNight);
+            $this->maxNight = max($profitsPerNight);
+        }
+    }
+
+
+    public function getRequestIds(): array {
+        return $this->requestIds;
+    }
+
+    public function getTotalProfit(): float {
+        return $this->totalProfit;
+    }
+
+    public function getAverageNight(): float {
+        return $this->averageNight;
+    }
+
+    public function getMinNight(): float {
+        return $this->minNight;
+    }
+
+    public function getMaxNight(): float {
+        return $this->maxNight;
     }
 }

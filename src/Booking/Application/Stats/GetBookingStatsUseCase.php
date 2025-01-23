@@ -22,14 +22,12 @@ class GetBookingStatsUseCase
             return new GetBookingStatsResponse(0, 0, 0);
         }
 
-        $profitsPerNight = $bookings->map(
-            fn (BookingRequest $booking) => $booking->getProfitPerNight()
-        );
+        $bookings->calculateMetrics();
 
         return new GetBookingStatsResponse(
-            array_sum($profitsPerNight) / count($profitsPerNight),
-            min($profitsPerNight),
-            max($profitsPerNight)
+            $bookings->getAverageNight(),
+            $bookings->getMinNight(),
+            $bookings->getMaxNight(),
         );
     }
 }

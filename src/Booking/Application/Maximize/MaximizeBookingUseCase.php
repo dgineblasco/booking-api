@@ -60,28 +60,20 @@ class MaximizeBookingUseCase
         return $nextBooking->getCheckIn() >= $lastBooking->getCheckOut();
     }
 
-    /*TODO: Only one foreach on the Collection and return all the data needed in the response*/
     private function buildResponse(BookingRequestCollection $bestCombination): MaximizeBookingResponse
     {
         if ($bestCombination->isEmpty()) {
             return new MaximizeBookingResponse([], 0, 0, 0, 0);
         }
 
-        $profitsPerNight = $bestCombination->map(
-            fn (BookingRequest $booking) => $booking->getProfitPerNight()
-        );
+        $bestCombination->calculateMetrics();
 
         return new MaximizeBookingResponse(
-            $bestCombination->map(fn (BookingRequest $booking) => $booking->getId()),
+            $bestCombination->getRequestIds(),
             $bestCombination->getTotalProfit(),
-            $this->calculateAverageProfit($profitsPerNight),
-            min($profitsPerNight),
-            max($profitsPerNight)
+            $bestCombination->getAverageNight(),
+            $bestCombination->getMinNight(),
+            $bestCombination->getMaxNight()
         );
-    }
-
-    private function calculateAverageProfit(array $profitsPerNight): float
-    {
-        return empty($profitsPerNight) ? 0 : array_sum($profitsPerNight) / count($profitsPerNight);
     }
 }
