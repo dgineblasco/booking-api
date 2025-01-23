@@ -247,20 +247,19 @@ class MaximizeBookingUseCaseTest extends TestCase
         $this->assertTrue($responseData['min_night'] < 0.001);
     }
 
-    public function test_bookings_far_in_future(): void
+    public function test_divison_by_zero_protection(): void
     {
         $rawBookings = [
             [
                 'request_id' => 'A',
-                'check_in' => '2525-12-31',
-                'nights' => 1,
+                'check_in' => '2026-01-01',
+                'nights' => 0,
                 'selling_rate' => 100,
                 'margin' => 10
             ]
         ];
 
-        $bookingA = $this->createBookingMock('A', '2525-12-31', '2526-01-01', 10.0, 10.0);
-
+        $bookingA = $this->createBookingMock('A', '2026-01-01', '2026-01-01', 10.0, 0.0);
         $collection = $this->createCollectionMock([$bookingA]);
         $this->creator->method('createCollection')->willReturn($collection);
 
@@ -268,6 +267,10 @@ class MaximizeBookingUseCaseTest extends TestCase
         $responseData = $response->toArray();
 
         $this->assertEquals(['A'], $responseData['request_ids']);
+        $this->assertEquals(10.0, $responseData['total_profit']);
+        $this->assertEquals(0.0, $responseData['avg_night']);
+        $this->assertEquals(0.0, $responseData['min_night']);
+        $this->assertEquals(0.0, $responseData['max_night']);
     }
 
     private function createCollectionMock(array $bookings): BookingRequestCollection|MockObject

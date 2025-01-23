@@ -96,8 +96,7 @@ class GetBookingStatsUseCaseTest extends TestCase
     public function test_calculate_stats_for_empty_bookings(): void
     {
         $collection = $this->createMock(BookingRequestCollection::class);
-        $collection->method('map')->willReturn([]);
-
+        $collection->method('isEmpty')->willReturn(true);
         $this->creator
             ->expects($this->once())
             ->method('createCollection')
@@ -105,6 +104,35 @@ class GetBookingStatsUseCaseTest extends TestCase
             ->willReturn($collection);
 
         $response = $this->useCase->execute([]);
+
+        $responseData = $response->toArray();
+        $this->assertEquals(0, $responseData['average']);
+        $this->assertEquals(0, $responseData['minimum']);
+        $this->assertEquals(0, $responseData['maximum']);
+    }
+
+    public function test_booking_with_zero_nights(): void
+    {
+        $rawBookings = [
+            [
+                'request_id' => '1',
+                'check_in' => '2024-01-01',
+                'nights' => 0,
+                'selling_rate' => 100.0,
+                'margin' => 10.0
+            ]
+        ];
+
+        $collection = $this->createMock(BookingRequestCollection::class);
+        $collection->method('map')->willReturn([0.0]);
+
+        $this->creator
+            ->expects($this->once())
+            ->method('createCollection')
+            ->with($rawBookings)
+            ->willReturn($collection);
+
+        $response = $this->useCase->execute($rawBookings);
 
         $responseData = $response->toArray();
         $this->assertEquals(0, $responseData['average']);

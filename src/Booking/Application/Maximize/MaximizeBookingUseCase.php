@@ -63,6 +63,10 @@ class MaximizeBookingUseCase
     /*TODO: Only one foreach on the Collection and return all the data needed in the response*/
     private function buildResponse(BookingRequestCollection $bestCombination): MaximizeBookingResponse
     {
+        if ($bestCombination->isEmpty()) {
+            return new MaximizeBookingResponse([], 0, 0, 0, 0);
+        }
+
         $profitsPerNight = $bestCombination->map(
             fn (BookingRequest $booking) => $booking->getProfitPerNight()
         );
@@ -71,8 +75,8 @@ class MaximizeBookingUseCase
             $bestCombination->map(fn (BookingRequest $booking) => $booking->getId()),
             $bestCombination->getTotalProfit(),
             $this->calculateAverageProfit($profitsPerNight),
-            empty($profitsPerNight) ? 0 : min($profitsPerNight),
-            empty($profitsPerNight) ? 0 : max($profitsPerNight)
+            min($profitsPerNight),
+            max($profitsPerNight)
         );
     }
 

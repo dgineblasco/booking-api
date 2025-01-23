@@ -18,19 +18,18 @@ class GetBookingStatsUseCase
     {
         $bookings = $this->bookingRequestCreator->createCollection($rawBookings);
 
+        if ($bookings->isEmpty()) {
+            return new GetBookingStatsResponse(0, 0, 0);
+        }
+
         $profitsPerNight = $bookings->map(
             fn (BookingRequest $booking) => $booking->getProfitPerNight()
         );
 
         return new GetBookingStatsResponse(
-            $this->calculateAverageProfit($profitsPerNight),
-            empty($profitsPerNight) ? 0 : min($profitsPerNight),
-            empty($profitsPerNight) ? 0 : max($profitsPerNight)
+            array_sum($profitsPerNight) / count($profitsPerNight),
+            min($profitsPerNight),
+            max($profitsPerNight)
         );
-    }
-
-    private function calculateAverageProfit(array $profitsPerNight): float
-    {
-        return empty($profitsPerNight) ? 0 : array_sum($profitsPerNight) / count($profitsPerNight);
     }
 }
