@@ -88,15 +88,15 @@ class GetBookingStatsUseCaseTest extends TestCase
         $response = $this->useCase->execute($rawBookings);
 
         $responseData = $response->toArray();
-        $this->assertEquals(6.25, $responseData['average']);  // (5.0 + 7.5) / 2
+        $this->assertEquals(6.25, $responseData['average']);
         $this->assertEquals(5.0, $responseData['minimum']);
         $this->assertEquals(7.5, $responseData['maximum']);
     }
 
     public function test_calculate_stats_for_empty_bookings(): void
     {
-        $collection = $this->createMock(BookingRequestCollection::class);
-        $collection->method('isEmpty')->willReturn(true);
+        $collection = BookingRequestCollection::create();
+
         $this->creator
             ->expects($this->once())
             ->method('createCollection')
