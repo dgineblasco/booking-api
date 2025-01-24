@@ -58,7 +58,6 @@ class BookingRequestCollection extends Collection
         }
     }
 
-
     public function getRequestIds(): array {
         return $this->requestIds;
     }

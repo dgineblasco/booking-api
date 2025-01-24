@@ -62,10 +62,6 @@ class MaximizeBookingUseCase
 
     private function buildResponse(BookingRequestCollection $bestCombination): MaximizeBookingResponse
     {
-        if ($bestCombination->isEmpty()) {
-            return new MaximizeBookingResponse([], 0, 0, 0, 0);
-        }
-
         $bestCombination->calculateMetrics();
 
         return new MaximizeBookingResponse(

@@ -18,10 +18,6 @@ class GetBookingStatsUseCase
     {
         $bookings = $this->bookingRequestCreator->createCollection($rawBookings);
 
-        if ($bookings->isEmpty()) {
-            return new GetBookingStatsResponse(0, 0, 0);
-        }
-
         $bookings->calculateMetrics();
 
         return new GetBookingStatsResponse(

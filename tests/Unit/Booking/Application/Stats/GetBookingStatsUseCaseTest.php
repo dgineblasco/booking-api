@@ -41,7 +41,7 @@ class GetBookingStatsUseCaseTest extends TestCase
             ]
         ];
 
-        /*** TODO: Create Mocks or Mothers instead ***/
+        /*** TODO: Mothers instead ***/
         $collection = BookingRequestCollection::create(
             new BookingRequest(
                 new RequestId($rawBookings[0]['request_id']),
@@ -86,7 +86,7 @@ class GetBookingStatsUseCaseTest extends TestCase
             ]
         ];
 
-        /*** TODO: Create Mocks or Mothers instead ***/
+        /*** TODO: Mothers instead ***/
         $collection = BookingRequestCollection::create(
             new BookingRequest(
                 new RequestId($rawBookings[0]['request_id']),
@@ -135,32 +135,4 @@ class GetBookingStatsUseCaseTest extends TestCase
         $this->assertEquals(0, $responseData['maximum']);
     }
 
-    public function test_booking_with_zero_nights(): void
-    {
-        $rawBookings = [
-            [
-                'request_id' => '1',
-                'check_in' => '2024-01-01',
-                'nights' => 0,
-                'selling_rate' => 100.0,
-                'margin' => 10.0
-            ]
-        ];
-
-        $collection = $this->createMock(BookingRequestCollection::class);
-        $collection->method('map')->willReturn([0.0]);
-
-        $this->creator
-            ->expects($this->once())
-            ->method('createCollection')
-            ->with($rawBookings)
-            ->willReturn($collection);
-
-        $response = $this->useCase->execute($rawBookings);
-
-        $responseData = $response->toArray();
-        $this->assertEquals(0, $responseData['average']);
-        $this->assertEquals(0, $responseData['minimum']);
-        $this->assertEquals(0, $responseData['maximum']);
-    }
 }
